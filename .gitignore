@@ -1,0 +1,15 @@
+# 🔹 Python Virtual Environments
+venv/
+.env
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+
+# Django migrations (optional)
+**/migrations/*.py
+!**/migrations/__init__.py
