@@ -10,7 +10,7 @@ from .serializers import BookSerializer
 @authentication_classes([JWTAuthentication])
 def get_books(request):
     """List all books"""
-    books = Book.objects.all()
+    books = Book.objects.filter(status=1).all()
     serializer = BookSerializer(books, many=True)
     return Response(serializer.data)
 
