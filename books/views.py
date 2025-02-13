@@ -54,3 +54,27 @@ def update_book(request, book_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(["PATCH"])
+@authentication_classes([JWTAuthentication])
+def change_book_status(request, book_id):
+    """Toggle book status (Active <-> Inactive) - Only Admins"""
+
+    user_type = request.user_data.get("user_type")  
+    if user_type != 1:
+        return Response({"detail": "You are not authorized to change book status."}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        book = Book.objects.get(id=book_id)
+    except Book.DoesNotExist:
+        return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    book.status = 0 if book.status == 1 else 1
+    book.save()
+
+    return Response({
+        "message": f"Book status changed to {'Active' if book.status == 1 else 'Inactive'}.",
+        "status": book.status
+    }, status=status.HTTP_200_OK)
