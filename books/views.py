@@ -31,3 +31,26 @@ def create_book(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["PATCH"])
+@authentication_classes([JWTAuthentication])
+def update_book(request, book_id):
+    """Update book details (only Admins) - Supports partial updates"""
+
+    user_type = request.user_data.get("user_type")  # Extract user_type
+
+    if user_type != 1:
+        return Response({"detail": "You are not authorized to update books."}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        book = Book.objects.get(id=book_id)
+    except Book.DoesNotExist:
+        return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = BookSerializer(book, data=request.data, partial=True)  # Allow partial updates
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

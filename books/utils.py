@@ -11,13 +11,10 @@ def decode_jwt(token: str):
     """
     Decode JWT token and return the payload.
     """
-    print(token, "token")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print(f"Decoded Payload: {payload}")  # Debugging output
         return payload
     except JWTError as e:
-        print(f"JWT Decode Error: {e}")  # Debugging output
         return None  
 
 
